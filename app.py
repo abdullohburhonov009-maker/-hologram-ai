@@ -1,5 +1,5 @@
 import streamlit as st
-import google.generativeai as genai
+import requests
 
 # 1. Танзимоти саҳифа
 st.set_page_config(page_title="Hologram AI", page_icon="❄️", layout="wide")
@@ -74,11 +74,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 🔑 Гузоштани калиди нави шумо бо усули устувори классикӣ
-GOOGLE_API_KEY = "AQ.Ab8RN6JrMLJ_GKTvBWpkIgMqrK_mVUYyoaQQ0JxJXuXDnXEvsQ"
-if GOOGLE_API_KEY:
-    genai.configure(api_key=GOOGLE_API_KEY)
-
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 if "chat_history" not in st.session_state:
@@ -112,16 +107,30 @@ def submit_question():
         else:
             try:
                 system_instruction = (
-                    "Tu Hologram AI hasti, ki onro barodarat Rais Abdulloh sohtaast. "
-                    "Tu yordamchii sodiq, hursand va mardona hasti. "
-                    "Ba savolho kutoho va anik javob deh, gaphoi ziyodi nanevis."
+                    "Ты Hologram AI, верный ИИ-брат Раиса Абдуллоха. "
+                    "Отвечай на таджикском или русском языке (на каком спросят). "
+                    "Отвечай очень быстро, четко и по делу."
                 )
-                # 🚀 НАИБОЛЕЕ МОЩНАЯ И СТАБИЛЬНАЯ МОДЕЛЬ ДЛЯ ЭТОГО МЕТОДА:
-                model = genai.GenerativeModel("gemini-2.5-flash")
-                response = model.generate_content(f"{system_instruction}\n\nСавол: {user_q}\nҶавоб:")
-                st.session_state.chat_history.append({"question": user_q, "answer": response.text})
+                
+                # ПРЯМОЙ СТАБИЛЬНЫЙ ЗАПРОС К КУШОДАИ CHATGPT (БЕЗ КЛЮЧЕЙ API!)
+                prompt = f"{system_instruction}\n\nСавол: {user_q}\nҶавоб:"
+                url = f"https://aryahcr.cc{requests.utils.quote(prompt)}"
+                
+                response = requests.get(url, timeout=10)
+                
+                if response.status_code == 200:
+                    try:
+                        res_json = response.json()
+                        bot_text = res_json.get('gpt', 'Бахшиш, ҷавоб холӣ баромад.')
+                        st.session_state.chat_history.append({"question": user_q, "answer": bot_text})
+                    except:
+                        # Агар формат матни оддӣ бошад
+                        st.session_state.chat_history.append({"question": user_q, "answer": response.text})
+                else:
+                    st.error("Сервер банд аст, илтимос дубора кӯшиш кунед.")
+                    
             except Exception as e:
-                st.error(f"Хатогӣ: {e}")
+                st.error(f"Хатогии система: {e}")
         st.session_state.widget_question = ""
 
 # Сатри савол дар маркази поён
