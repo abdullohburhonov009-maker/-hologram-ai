@@ -110,7 +110,7 @@ with st.sidebar:
         
     st.markdown("---")
     st.markdown("### 📲 Насб кардан дар Телефон")
-    st.info("Раисҷон! Барои скачат ва насб кардани Hologram дар телефон: Дар болои браузери телефон се нуқтаро (меню) пахш кунед ва тугмаи «Добавить на гл. экран» ё «Установить приложение»-ро зер кунед. Барнома мисли Gemini насб мешавад! ❄️")
+    st.info("Раисҷон! Барои скачат ва насб кардани Hologram дар телефон: Дар болои браузери телефон се нуқтаро (меню) пахш кунед ва тугмаи «Добавить на гл. screen» ё «Установить приложение»-ро зер кунед. Барнома мисли Gemini насб мешавад! ❄️")
 
 # Номи барнома дар боло
 st.markdown("<h1 class='main-title'>❄️ Hologram</h1>", unsafe_allow_html=True)
@@ -141,16 +141,16 @@ def submit_question():
         else:
             with st.empty():
                 st.markdown("<div class='spinning-snowflake'>❄️</div>", unsafe_allow_html=True)
-                time.sleep(1.2)
+                time.sleep(0.5)
                 
                 try:
                     system_instruction = (
                         "Tu Hologram AI hasti, ki onro barodarat Rais Abdulloh sohtaast. "
-                        "Tu ёрдамчии бениҳоят содиқ, хурсанд, мардона ва меҳрубон ҳастӣ. "
-                        "Ба саволҳо хеле тез, мисли тир, дақиқ ва касбӣ ҷавоб деҳ."
+                        "Tu yordamchii sodiq, hursand va mardona hasti. "
+                        "Ba savolho kutoho va anik javob deh, gaphoi ziyodi nanevis."
                     )
                     response = client.models.generate_content(
-                        model='gemini-3.6-flash',
+                        model='gemini-2.5-flash',
                         contents=f"{system_instruction}\n\nСавол: {user_q}\nҶавоб:"
                     )
                     st.session_state.chat_history.append({"question": user_q, "answer": response.text})
@@ -174,4 +174,4 @@ if st.session_state.chat_history:
         st.markdown(f"<div class='user-message'><b>👑 Раис Абдуллоҳ:</b> {chat['question']}</div>", unsafe_allow_html=True)
         st.markdown(f"<div class='bot-message'><b>🤖 Hologram (Бародари содиқи шумо):</b><br>{chat['answer']}</div>", unsafe_allow_html=True)
         if "image_url" in chat:
-            st.image(chat["image_url"], caption="Сурати офаридаи Hologram", use_column_width=True)
+            st.image(chat["image_url"], caption="Сурати офаридаи Hologram", use_container_width=True)
