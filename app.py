@@ -1,6 +1,5 @@
 import streamlit as st
-import requests
-import json
+import google.generativeai as genai
 
 # 1. Танзимоти саҳифа
 st.set_page_config(page_title="Hologram AI", page_icon="❄️", layout="wide")
@@ -75,8 +74,10 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 🔑 Пайваст кардани калиди устувор
-GOOGLE_API_KEY = "AQ.Ab8RN6KzuzB7whlc5i5nC4WjynfKk-bcBgOAjm4mwCAvRfBFVQ"
+# 🔑 Гузоштани калиди нави шумо бо усули устувори классикӣ
+GOOGLE_API_KEY = "AQ.Ab8RN6JrMLJ_GKTvBWpkIgMqrK_mVUYyoaQQ0JxJXuXDnXEvsQ"
+if GOOGLE_API_KEY:
+    genai.configure(api_key=GOOGLE_API_KEY)
 
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
@@ -115,29 +116,12 @@ def submit_question():
                     "Tu yordamchii sodiq, hursand va mardona hasti. "
                     "Ba savolho kutoho va anik javob deh, gaphoi ziyodi nanevis."
                 )
-                
-                # 🚀 ИСПРАВЛЕННЫЙ АДРЕС ИНТЕРНЕТ-ЗАПРОСА
-                url = "https://googleapis.com"
-                params = {'key': GOOGLE_API_KEY}
-                headers = {'Content-Type': 'application/json'}
-                data = {
-                    "contents": [{
-                        "parts": [{"text": f"{system_instruction}\n\nСавол: {user_q}\nҶавоб:"}]
-                    }]
-                }
-                
-                response = requests.post(url, params=params, headers=headers, data=json.dumps(data))
-                res_json = response.json()
-                
-                if response.status_code == 200:
-                    bot_text = res_json['candidates'][0]['content']['parts'][0]['text']
-                    st.session_state.chat_history.append({"question": user_q, "answer": bot_text})
-                else:
-                    error_msg = res_json.get('error', {}).get('message', 'Хатогии номаълум')
-                    st.error(f"Хатогии сервер: {error_msg}")
-                    
+                # Мағзи зӯр ва устувор, ки ин калидро 100% қабул мекунад
+                model = genai.GenerativeModel("gemini-1.5-flash")
+                response = model.generate_content(f"{system_instruction}\n\nСавол: {user_q}\nҶавоб:")
+                st.session_state.chat_history.append({"question": user_q, "answer": response.text})
             except Exception as e:
-                st.error(f"Хатогии система: {e}")
+                st.error(f"Хатогӣ: {e}")
         st.session_state.widget_question = ""
 
 # Сатри савол дар маркази поён
