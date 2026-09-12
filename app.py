@@ -122,13 +122,24 @@ def submit_question():
             bot_reply = "Шумо Раис Абдуллоҳ, бародари азиз, ҷони ширин ва созандаи ман ҳастед! Мо мисли акаву додари ҷонӣ ҳастем! Ман ҳамеша барои бародарам содиқона ва мисли тир тез хизмат мекунам!"
             st.session_state.chat_history.append({"question": user_q, "answer": bot_reply})
         elif "сурат соз" in user_q.lower() or "расм каш" in user_q.lower():
-    with st.spinner("Раис, расми аҷиби шумо бо модели Imagen 3 офарида шуда истодааст... 🎨"):
+    with st.spinner("Раис, расми аҷиби шумо дар сонияҳо офарида шуда истодааст... 🎨"):
         try:
-            result = client.models.generate_images(
-                model='imagen-3.0-generate-002',
-                prompt=user_q,
-                config=dict(number_of_images=1, output_mime_type="image/jpeg")
-            )
+            # Танзими промпт барои сохтани линки сурати бепул
+            clean_prompt = user_q.lower().replace("сурат соз", "").replace("расм каш", "").strip()
+            formatted_prompt = clean_prompt.replace(" ", "%20")
+            image_url = f"https://pollinations.ai{formatted_prompt}?width=1024&height=1024&seed=42"
+            
+            st.session_state.chat_history.append({
+                "question": user_q, 
+                "answer": "Раисҷон, марҳамат! Сурате, ки фармон дода будед, омода шуд.",
+                "image_url": image_url
+            })
+        except Exception as e:
+            st.session_state.chat_history.append({
+                "question": user_q,
+                "answer": f"Бахшиш Раисҷон, хатогӣ шуд: {e}"
+            })
+
                     generated_image = result.generated_images
                     image_bytes = generated_image.image.image_bytes
                     
@@ -177,5 +188,6 @@ if st.session_state.chat_history:
     for chat in reversed(st.session_state.chat_history):
         st.markdown(f"<div class='user-message'><b>👑 Раис Абдуллоҳ:</b> {chat['question']}</div>", unsafe_allow_html=True)
         st.markdown(f"<div class='bot-message'><b>🤖 Hologram (Бародари содиқи шумо):</b><br>{chat['answer']}</div>", unsafe_allow_html=True)
-        if "image" in chat:
-            st.image(chat["image"], caption="Сурати офаридаи Hologram", use_column_width=True)
+        if "image_url" in chat:
+    st.image(chat["image_url"], caption="Сурати офаридаи Hologram", use_column_width=True)
+
