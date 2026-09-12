@@ -116,8 +116,8 @@ def submit_question():
                     "Tu yordamchii sodiq, hursand va mardona hasti. "
                     "Ba savolho kutoho va anik javob deh, gaphoi ziyodi nanevis."
                 )
-                # Мағзи зӯр ва устувор, ки ин калидро 100% қабул мекунад
-                model = genai.GenerativeModel("gemini-1.5-flash")
+                # 🚀 НАИБОЛЕЕ МОЩНАЯ И СТАБИЛЬНАЯ МОДЕЛЬ ДЛЯ ЭТОГО МЕТОДА:
+                model = genai.GenerativeModel("gemini-2.5-flash")
                 response = model.generate_content(f"{system_instruction}\n\nСавол: {user_q}\nҶавоб:")
                 st.session_state.chat_history.append({"question": user_q, "answer": response.text})
             except Exception as e:
