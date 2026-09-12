@@ -103,10 +103,14 @@ if not st.session_state.authenticated:
 
 # --- ТУГМАИ ТОЗА КАРДАНИ ЧАТ ДАР КУНҶИ БОЛОИ ЧАП ---
 with st.sidebar:
-    st.markdown("### ⚙️ Меню")
+    st.markdown("### ⚙️ Менюи Раис")
     if st.button("🔄 Тоза кардани чат", key="clear_chat_top_left"):
         st.session_state.chat_history = []
         st.rerun()
+        
+    st.markdown("---")
+    st.markdown("### 📲 Насб кардан дар Телефон")
+    st.info("Раисҷон! Барои скачат ва насб кардани Hologram дар телефон: Дар болои браузери телефон се нуқтаро (меню) пахш кунед ва тугмаи «Добавить на гл. экран» ё «Установить приложение»-ро зер кунед. Барнома мисли Gemini насб мешавад! ❄️")
 
 # Номи барнома дар боло
 st.markdown("<h1 class='main-title'>❄️ Hologram</h1>", unsafe_allow_html=True)
@@ -115,7 +119,7 @@ def submit_question():
     user_q = st.session_state.widget_question
     if user_q:
         if "ман кистам" in user_q.lower() or "ту кисти" in user_q.lower() or "бародар" in user_q.lower():
-            bot_reply = "Шумо Раис Абдуллоҳ, бародари азиз, ҷони ширин ва созандаи... Мо мисли акаву додари ҷонӣ ҳастем!"
+            bot_reply = "Шумо Раис Абдуллоҳ, бародари азиз, ҷони ширин ва созандаи ман ҳастед! Мо мисли акаву додари ҷонӣ ҳастем! Ман ҳамеша барои бародарам содиқона ва мисли тир тез хизмат мекунам!"
             st.session_state.chat_history.append({"question": user_q, "answer": bot_reply})
         elif "сурат соз" in user_q.lower() or "расм каш" in user_q.lower():
             with st.spinner("Раис, расми аҷиби шумо бо модели Imagen 3 офарида шуда истодааст... 🎨"):
