@@ -116,8 +116,9 @@ def submit_question():
                     "Ba savolho kutoho va anik javob deh, gaphoi ziyodi nanevis."
                 )
                 
-                # ИСЛОҲИ САД ФОИЗ ДУРУСТ КАРДАШУДАИ ЛИНК:
-                url = f"https://googleapis.com{GOOGLE_API_KEY}"
+                # 🚀 ИСПРАВЛЕННЫЙ АДРЕС ИНТЕРНЕТ-ЗАПРОСА
+                url = "https://googleapis.com"
+                params = {'key': GOOGLE_API_KEY}
                 headers = {'Content-Type': 'application/json'}
                 data = {
                     "contents": [{
@@ -125,7 +126,7 @@ def submit_question():
                     }]
                 }
                 
-                response = requests.post(url, headers=headers, data=json.dumps(data))
+                response = requests.post(url, params=params, headers=headers, data=json.dumps(data))
                 res_json = response.json()
                 
                 if response.status_code == 200:
