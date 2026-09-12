@@ -75,7 +75,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # 🔑 Танзими калиди устувори классикӣ
-GOOGLE_API_KEY = "AQ.Ab8RN6IQ5nx9VE30AkRu-8EQCZpmrr72wR4P85w-_SbDGX6irQ"
+GOOGLE_API_KEY = "AQ.Ab8RN6KzuzB7whlc5i5nC4WjynfKk-bcBgOAjm4mwCAvRfBFVQ"
 if GOOGLE_API_KEY:
     genai.configure(api_key=GOOGLE_API_KEY)
 
