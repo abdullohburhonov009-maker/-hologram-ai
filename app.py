@@ -1,6 +1,6 @@
 import streamlit as st
-import time
-from google import genai
+import requests
+import json
 
 # 1. Танзимоти саҳифа
 st.set_page_config(page_title="Hologram AI", page_icon="❄️", layout="wide")
@@ -75,10 +75,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 🔑 Пайваст кардани мағзи Google бо калиди нави шумо
+# 🔑 Пайваст кардани калиди устувор
 GOOGLE_API_KEY = "AQ.Ab8RN6KzuzB7whlc5i5nC4WjynfKk-bcBgOAjm4mwCAvRfBFVQ"
-if GOOGLE_API_KEY:
-    client = genai.Client(api_key=GOOGLE_API_KEY)
 
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
@@ -117,14 +115,28 @@ def submit_question():
                     "Tu yordamchii sodiq, hursand va mardona hasti. "
                     "Ba savolho kutoho va anik javob deh, gaphoi ziyodi nanevis."
                 )
-                # Истифодаи модели мувофиқи кутубхонаи google-genai
-                response = client.models.generate_content(
-                    model='gemini-2.5-flash',
-                    contents=f"{system_instruction}\n\nСавол: {user_q}\nҶавоб:"
-                )
-                st.session_state.chat_history.append({"question": user_q, "answer": response.text})
+                
+                # Дархости мустақими HTTP барои 100% қабул кардани калиди шумо
+                url = f"https://googleapis.com{GOOGLE_API_KEY}"
+                headers = {'Content-Type': 'application/json'}
+                data = {
+                    "contents": [{
+                        "parts": [{"text": f"{system_instruction}\n\nСавол: {user_q}\nҶавоб:"}]
+                    }]
+                }
+                
+                response = requests.post(url, headers=headers, data=json.dumps(data))
+                res_json = response.json()
+                
+                if response.status_code == 200:
+                    bot_text = res_json['candidates'][0]['content']['parts'][0]['text']
+                    st.session_state.chat_history.append({"question": user_q, "answer": bot_text})
+                else:
+                    error_msg = res_json.get('error', {}).get('message', 'Хатогии номаълум')
+                    st.error(f"Хатогии сервер: {error_msg}")
+                    
             except Exception as e:
-                st.error(f"Хатогӣ: {e}")
+                st.error(f"Хатогии система: {e}")
         st.session_state.widget_question = ""
 
 # Сатри савол дар маркази поён
