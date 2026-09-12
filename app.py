@@ -1,5 +1,5 @@
 import streamlit as st
-from google import genai
+import google.generativeai as genai
 
 # 1. Танзимоти саҳифа
 st.set_page_config(page_title="Hologram AI", page_icon="❄️", layout="wide")
@@ -74,10 +74,10 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 🔑 Калиди API
+# 🔑 Танзими калиди устувори классикӣ
 GOOGLE_API_KEY = "AQ.Ab8RN6IQ5nx9VE30AkRu-8EQCZpmrr72wR4P85w-_SbDGX6irQ"
 if GOOGLE_API_KEY:
-    client = genai.Client(api_key=GOOGLE_API_KEY)
+    genai.configure(api_key=GOOGLE_API_KEY)
 
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
@@ -116,10 +116,9 @@ def submit_question():
                     "Tu yordamchii sodiq, hursand va mardona hasti. "
                     "Ba savolho kutoho va anik javob deh, gaphoi ziyodi nanevis."
                 )
-                response = client.models.generate_content(
-                    model='gemini-2.5-flash',
-                    contents=f"{system_instruction}\n\nСавол: {user_q}\nҶавоб:"
-                )
+                # ХАМОН МАҒЗИ ЗӮРИ ПЕШТАРА: Gemini 3.6 Flash кушода шуд
+                model = genai.GenerativeModel("gemini-3.6-flash")
+                response = model.generate_content(f"{system_instruction}\n\nСавол: {user_q}\nҶавоб:")
                 st.session_state.chat_history.append({"question": user_q, "answer": response.text})
             except Exception as e:
                 st.error(f"Хатогӣ: {e}")
