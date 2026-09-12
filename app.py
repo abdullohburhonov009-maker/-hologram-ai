@@ -122,13 +122,13 @@ def submit_question():
             bot_reply = "Шумо Раис Абдуллоҳ, бародари азиз, ҷони ширин ва созандаи ман ҳастед! Мо мисли акаву додари ҷонӣ ҳастем! Ман ҳамеша барои бародарам содиқона ва мисли тир тез хизмат мекунам!"
             st.session_state.chat_history.append({"question": user_q, "answer": bot_reply})
         elif "сурат соз" in user_q.lower() or "расм каш" in user_q.lower():
-            with st.spinner("Раис, расми аҷиби шумо бо модели Imagen 3 офарида шуда истодааст... 🎨"):
-                try:
-                    result = client.models.generate_images(
-                        model='imagen-3.0-generate-002',
-                        prompt=user_q,
-                        config=dict(number_of_images=1, output_mime_type="image/jpeg")
-                    )
+    with st.spinner("Раис, расми аҷиби шумо бо модели Imagen 3 офарида шуда истодааст... 🎨"):
+        try:
+            result = client.models.generate_images(
+                model='imagen-3.0-generate-002',
+                prompt=user_q,
+                config=dict(number_of_images=1, output_mime_type="image/jpeg")
+            )
                     generated_image = result.generated_images
                     image_bytes = generated_image.image.image_bytes
                     
