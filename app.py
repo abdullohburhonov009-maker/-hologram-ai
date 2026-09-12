@@ -116,7 +116,7 @@ def submit_question():
                     "Ba savolho kutoho va anik javob deh, gaphoi ziyodi nanevis."
                 )
                 
-                # Дархости мустақими HTTP барои 100% қабул кардани калиди шумо
+                # ИСЛОҲИ САД ФОИЗ ДУРУСТ КАРДАШУДАИ ЛИНК:
                 url = f"https://googleapis.com{GOOGLE_API_KEY}"
                 headers = {'Content-Type': 'application/json'}
                 data = {
