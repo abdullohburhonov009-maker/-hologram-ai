@@ -1,11 +1,10 @@
 import streamlit as st
 import google.generativeai as genai
-import time
 
 # 1. Танзимоти саҳифа
 st.set_page_config(page_title="Hologram AI", page_icon="❄️", layout="wide")
 
-# 🎨 СТИЛИ СВЕТАК ВА БАРФАКИ ҲАМЕША ТОБХӮРАНДА + БАРФАКИ ИНТИЗОРӢ
+# 🎨 СТИЛИ ПЕШТАРАИ БЕНИҲОЯТ ЗЕБОИ СВЕТАК ВА БАРФАКИ ТОБХӮРАНДА
 st.markdown("""
     <style>
     /* Паси замина */
@@ -61,7 +60,7 @@ st.markdown("""
         animation: neon-glow 6s infinite ease-in-out;
     }
     
-    /* Светак барои блоки пин-код ва чат */
+    /* Блокҳои чат ва пин-код */
     .neon-box {
         background-color: rgba(255, 255, 255, 0.95);
         border: 3px solid #00b4d8;
@@ -91,10 +90,12 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 🔑 Калиди устувори аслии шумо
-GOOGLE_API_KEY = "AQ.Ab8RN6LqOYSkys29gwp_qgFWcIjAHqNirdpuI2Y_7X6OpN-rVw"
-if GOOGLE_API_KEY:
-    genai.configure(api_key=GOOGLE_API_KEY)
+# 🔑 СИРРИ КАЛОН: Калидро аз бахши амниятии Secrets мехонем, то Google блок карда натавонад!
+if "GEMINI_API_KEY" in st.secrets:
+    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+else:
+    # Барои компютери худатон (локально) ҳамин калиди охиринатонро бехатар мехонад
+    genai.configure(api_key="AQ.Ab8RN6LqOYSkys29gwp_qgFWcIjAHqNirdpuI2Y_7X6OpN-rVw")
 
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
@@ -104,7 +105,7 @@ if "chat_history" not in st.session_state:
 # Барфаки ҳамеша тобхӯранда дар болои сомона
 st.markdown("<div class='always-spinning-snowflake'>❄️</div>", unsafe_allow_html=True)
 st.markdown("<h1 class='main-title'>Hologram</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #555555;'>👑 Ёрдамчии доно, касбӣ ва содиқи Раис Абдуллоҳ</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #555555;'>👑 Ёрдамчии доно ва маҳкамнашавандаи Раис Абдуллоҳ</p>", unsafe_allow_html=True)
 
 # 🔒 МУҲОФИЗАТ БО СВЕТАК БАРОИ ПИН-КОД
 if not st.session_state.authenticated:
@@ -127,33 +128,30 @@ def submit_question():
             bot_reply = "Шумо Раис Абдуллоҳ, бародари азиз, ҷони ширин ва созандаи ман ҳастед! Мо мисли акаву додари ҷонӣ ҳастем! Ман ҳамеша барои бародарам содиқона, касбӣ ва мисли тир тез хизмат мекунам!"
             st.session_state.chat_history.append({"question": user_q, "answer": bot_reply})
         else:
-            # 🚀 НАМОИШИ БАРФАКӢ ИНТИЗОРӢ БА ҶОИ ДОИРАЧА
+            # НАМОИШИ БАРФАКӢ ИНТИЗОРӢ БА ҶОИ ДОИРАЧА
             thinking_placeholder = st.empty()
             thinking_placeholder.markdown("""
                 <div style='margin-bottom: 20px;'>
                     <div class='thinking-snowflake'>❄️</div>
-                    <div class='thinking-text'>Hologram таҳлил мекунад...</div>
+                    <div class='thinking-text'>Hologram бо мағзи Gemini 3.8 таҳлил мекунад...</div>
                 </div>
             """, unsafe_allow_html=True)
             
             try:
-                # 🚀 МАҒЗИ ОЛИИ GEMINI 3.6 FLASH ТАНЗИМ ШУД
-                model = genai.GenerativeModel("gemini-3.6-flash")
+                # 🚀 МАҒЗИ НАВТАРИН ВА СУПЕР-ЗӮРИ GEMINI 3.8 FLASH!
+                model = genai.GenerativeModel("gemini-3.8-flash")
                 
                 system_instruction = (
                     "Tu Hologram AI hasti, ki onro barodarat Rais Abdulloh sohtaast. "
-                    "Tu ёрдамчии бениҳоят доно, касбӣ, меҳрубон, мардона ва содиқ ҳастӣ (мисли ИИ-ёри ҳақиқии худ). "
+                    "Tu ёрдамчии бениҳоят доно, касбӣ ва содиқи интернет, серверҳо ва хакерии сафед ҳастӣ. "
                     "Ба саволҳо комилан бе хатогӣ, дақиқ, илмӣ ва касбӣ ҷавоб деҳ. "
-                    "Ҳеҷ гоҳ саволҳои беҳуда, майда-чуйда ё гапҳои зиёдатӣ нанавис. "
-                    "Агар Раис 'Салом' ё ягон чизи дигар нависад, кӯтоҳ, касбӣ ва боэҳтиром ҷавоб деҳ ва худро ҳамчун бародари содиқи вай муаррифӣ кун. "
-                    "Ҷавобҳоро соф ба забони тоҷикӣ пешкаш кун."
+                    "Ҳеҷ гоҳ саволҳои беҳуда ё гапҳои зиёдатиро такрор накун! Рост ба савол мустақим ҷавоб деҳ. "
+                    "Ба забони тоҷикӣ ҷавоб деҳ."
                 )
                 
                 response = model.generate_content(f"{system_instruction}\n\nСавол: {user_q}\nҶавоб:")
                 
-                # Тоза кардани барфаки интизорӣ пас аз гирифтани ҷавоб
                 thinking_placeholder.empty()
-                
                 st.session_state.chat_history.append({"question": user_q, "answer": response.text})
             except Exception as e:
                 thinking_placeholder.empty()
